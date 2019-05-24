@@ -1,6 +1,6 @@
 {
   "name": "d3fc-webgl",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A WebGL implementation of d3fc series",
   "license": "MIT",
   "homepage": "https://github.com/DevAndyLee/d3fc-webgl",
