@@ -1,0 +1,37 @@
+{
+  "name": "d3fc-webgl",
+  "version": "0.0.1",
+  "description": "A WebGL implementation of d3fc series",
+  "license": "MIT",
+  "homepage": "https://github.com/DevAndyLee/d3fc-webgl",
+  "main": "build/d3fc-webgl.js",
+  "module": "index",
+  "scripts": {
+    "build": "rollup -c",
+    "uglify": "uglifyjs build/d3fc-webgl.js --output build/d3fc-webgl.min.js",
+    "prepublishOnly": "npm run build && npm run uglify"
+  },
+  "keywords": [
+    "d3fc",
+    "chart",
+    "cartesian",
+    "webgl"
+  ],
+  "author": "alee@scottlogic.com",
+  "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "rollup": "^1.11.3",
+    "rollup-plugin-babel": "^4.3.2",
+    "rollup-plugin-node-resolve": "^4.2.4",
+    "uglify-js": "^3.5.11"
+  },
+  "dependencies": {
+    "@d3fc/d3fc-chart": "^2.5.9",
+    "@d3fc/d3fc-rebind": "^5.0.6",
+    "d3-color": "^1.2.3",
+    "d3-scale": "^3.0.0",
+    "d3-selection": "^1.4.0",
+    "gl-matrix": "^3.0.0"
+  }
+}

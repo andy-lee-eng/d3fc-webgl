@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- include polyfills for custom event, Symbol and Custom Elements -->
+  <script src="https://unpkg.com/babel-polyfill@6.26.0/dist/polyfill.js"></script>
+  <script src="https://unpkg.com/custom-event-polyfill@0.3.0/custom-event-polyfill.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.8.0/document-register-element.js"></script>
+
+  <script src="https://unpkg.com/d3@5.5.0"></script>
+  <script src="https://unpkg.com/d3fc@14.0.39"></script>
+  <script src="../../d3fc-flexi-chart/build/d3fc-flexi-chart.js"></script>
+  <script src="../build/d3fc-webgl.js"></script>
+
+  <style>
+    html, body, #content {
+      height: 100%;
+      margin: 0;
+    }
+    #type {
+      position: absolute;
+      bottom: 5px;
+      left: 20px;
+
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #type li {
+      display: inline-block;
+      margin-right: 20px;
+    }
+    #fps {
+      position: absolute;
+      bottom: 5px;;
+      right: 20px;
+    }
+    #slider {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 250px;
+      height: 40px;
+      background-color: white;
+    }
+  </style>
+</head>
+<body>
+  <div id="content"></div>
+  <ul id="type">
+    <li><input type="radio" name="seriesType" id="seriesCanvas" /><label for="seriesCanvas">Canvas</label></li>
+    <li><input type="radio" name="seriesType" id="seriesWebGL" checked /><label for="seriesWebGL">WebGL</label></li>
+    <li><input type="radio" name="borderStyle" id="withBorders" /><label for="withBorders">With Borders</label></li>
+    <li><input type="radio" name="borderStyle" id="withoutBorders" checked /><label for="withoutBorders">No Borders</label></li>
+  </ul>
+  <svg id="slider"></svg>
+  <div id="fps"></div>
+  <script src="slider.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
