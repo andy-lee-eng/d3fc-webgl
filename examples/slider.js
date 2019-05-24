@@ -30,6 +30,16 @@ const slider = () => {
       .style('fill', '#888')
       .text(d => d);
 
+    const moveToPosition = x => {
+      const position = 100 * Math.floor((max / 100) * (x / sliderWidth));
+      const newValue = Math.min(max, Math.max(min, position));
+      if (value !== newValue) {
+        value = newValue;
+        slider(selection);
+        on.change(value);
+      }
+    };
+
     const x = (value / max) * (size.width - textSize);
     const handleWidth = size.height - 8;
     handleJoin(selection, data)
@@ -40,15 +50,9 @@ const slider = () => {
       .style('stroke', '#888')
       .style('fill', '#eee')
       .style('cursor', 'pointer')
-      .call(d3.drag().on('drag', () => {
-        const position = 100 * Math.floor((max / 100) * (d3.event.x / sliderWidth));
-        const newValue = Math.min(max, Math.max(min, position));
-        if (value !== newValue) {
-          value = newValue;
-          slider(selection);
-          on.change(value);
-        }
-      }));
+      .call(d3.drag().on('drag', () => moveToPosition(d3.event.x)));
+
+    selection.on('click', () => moveToPosition(d3.event.x));
   };
 
   slider.on = (...args) => {

@@ -30,19 +30,8 @@ const fsSource = `
   varying lowp vec4 vColorEdge;
 
   void main() {
-    lowp float r = (vEdge[1] - vEdge[0]) / 2.0;
-    if (r > 1.0) {
-      gl_FragColor = vColor;
-    } else if (r < 0.0) {
-      gl_FragColor = vColorEdge;
-    } else {
-      lowp vec4 blended;
-      blended[0] = vColorEdge[0] + r * (vColor[0] - vColorEdge[0]);
-      blended[1] = vColorEdge[1] + r * (vColor[1] - vColorEdge[1]);
-      blended[2] = vColorEdge[2] + r * (vColor[2] - vColorEdge[2]);
-      blended[3] = vColorEdge[3] + r * (vColor[3] - vColorEdge[3]);
-      gl_FragColor = blended;
-    }
+    lowp float r = clamp((vEdge[1] - vEdge[0]) / 2.0, 0.0, 1.0);
+    gl_FragColor = r * vColor + (1.0 - r) * vColorEdge;
   }
 `;
 
