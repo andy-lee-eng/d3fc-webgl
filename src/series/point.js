@@ -60,35 +60,6 @@ export default () => {
         (projectedData.data);
     };
 
-    const shapePoints = (filteredData, pixel, drawPoints) => {
-      const projectedData = getProjectedData(filteredData, false);
-
-      const trianglesPerShape = (typePoints.length / 2 - 1);
-      const points = new Float32Array(filteredData.length * trianglesPerShape * 6);
-
-      let index = 0;
-      let target = 0;
-      const data = projectedData.data;
-      while(index < data.length) {
-        const x = data[index++];
-        const y = data[index++];
-        const size = data[index++];
-
-        for(let n = 0; n < typePoints.length - 2; n += 2) {
-          points[target++] = x;
-          points[target++] = y;
-
-          points[target++] = x + typePoints[n] * size * pixel.x;
-          points[target++] = y - typePoints[n + 1] * size * pixel.y;
-
-          points[target++] = x + typePoints[n + 2] * size * pixel.x;
-          points[target++] = y - typePoints[n + 3] * size * pixel.y;
-        }
-      };
-
-      drawPoints(points);
-    };
-
     const circlePointsWA = (filteredData, pixel, drawPoints) => {
       const projectedData = getProjectedData(filteredData, true);
 
@@ -97,37 +68,6 @@ export default () => {
         .pixelY(pixel.y)
         .callback(drawPoints)
         (projectedData.data,  projectedData.segmentCount);
-    };
-
-    const circlePoints = (filteredData, pixel, drawPoints) => {
-      const projectedData = getProjectedData(filteredData, true);
-      const points = new Float32Array(projectedData.segmentCount * 6);
-
-      let index = 0;
-      let target = 0;
-      const data = projectedData.data;
-      while(index < data.length) {
-        const x = data[index++];
-        const y = data[index++];
-        const size = data[index++];
-        const segments = data[index++];
-
-        const getX = angle => x + Math.sin(angle) * size * pixel.x;
-        const getY = angle => y + Math.cos(angle) * size * pixel.y;
-
-        for(let n = 0; n < segments; n++) {
-          const a1 = 2 * n * Math.PI / segments;
-          const a2 = 2 * (n + 1) * Math.PI / segments;
-
-          points[target++] = x;
-          points[target++] = y;
-          points[target++] = getX(a1);
-          points[target++] = getY(a1);
-          points[target++] = getX(a2);
-          points[target++] = getY(a2);
-        }
-      }
-      drawPoints(points);
     };
 
     const getProjectedData = (data, includeSegmentCount = false) => {
