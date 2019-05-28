@@ -3,6 +3,8 @@ import {rebindAll, exclude} from '@d3fc/d3fc-rebind';
 import xyBase from '../xyBase';
 import {colors, glColor} from '../colors';
 
+import {circles, shapes} from 'd3fc-webgl-proc';
+
 export default () => {
     const base = xyBase();
     let size = 5;
@@ -11,10 +13,9 @@ export default () => {
 
     const point = (data) => {
         base();
-      
+
         const context = base.context();
         const filteredData = data.filter(base.defined());
-        const projectedData = filteredData.map(valueFn());
 
         const xRange = base.xScale().range();
         const yRange = base.yScale().range();
@@ -31,100 +32,137 @@ export default () => {
         const strokeColor = context.strokeStyle != 'transparent' ? glColor(context.strokeStyle) : null;
         const strokeWidth = parseInt(context.strokeWidth);
 
-        const points = typePoints ? shapePoints(projectedData, pixel) : circlePoints(projectedData, pixel);
+        const drawPoints = points => {
+          if (strokeColor) {
+            base.draw().edges(points, fillColor, strokeWidth, strokeColor);
+          } else {
+            base.draw().triangles(points, fillColor);
+          }
+        };
 
-        if (strokeColor) {
-          base.draw().edges(points, fillColor, strokeWidth, strokeColor);
+        if (typePoints) {
+          shapePointsWA(filteredData, pixel, drawPoints);
         } else {
-          base.draw().triangles(points, fillColor);
+          circlePointsWA(filteredData, pixel, drawPoints);
         }
+
         base.draw(null);
     };
 
-    const shapePoints = (projectedData, pixel) => {
-      const trianglesPerShape = (typePoints.length - 1);
-      const points = new Float32Array(projectedData.length * trianglesPerShape * 6);
-      let allPointsIndex = 0;
-      projectedData.forEach((datum, i) => {
-        const computedSize = Math.floor(Math.sqrt(datum.size) * 0.5);
+    const shapePointsWA = (filteredData, pixel, drawPoints) => {
+      const projectedData = getProjectedData(filteredData, false);
 
-        const x = datum.x;
-        const y = datum.y;
+      shapes()
+        .pixelX(pixel.x)
+        .pixelY(pixel.y)
+        .shape(typePoints)
+        .callback(drawPoints)
+        (projectedData.data);
+    };
 
-        for(let n = 0; n < typePoints.length - 1; n++) {
-          const p = allPointsIndex;
-          
-          points[p] = x;
-          points[p + 1] = y;
+    const shapePoints = (filteredData, pixel, drawPoints) => {
+      const projectedData = getProjectedData(filteredData, false);
 
-          points[p + 2] = x + typePoints[n][0] * computedSize * pixel.x;
-          points[p + 3] = y - typePoints[n][1] * computedSize * pixel.y;
+      const trianglesPerShape = (typePoints.length / 2 - 1);
+      const points = new Float32Array(filteredData.length * trianglesPerShape * 6);
 
-          points[p + 4] = x + typePoints[n + 1][0] * computedSize * pixel.x;
-          points[p + 5] = y - typePoints[n + 1][1] * computedSize * pixel.y;
+      let index = 0;
+      let target = 0;
+      const data = projectedData.data;
+      while(index < data.length) {
+        const x = data[index++];
+        const y = data[index++];
+        const size = data[index++];
 
-          allPointsIndex += 6;
+        for(let n = 0; n < typePoints.length - 2; n += 2) {
+          points[target++] = x;
+          points[target++] = y;
+
+          points[target++] = x + typePoints[n] * size * pixel.x;
+          points[target++] = y - typePoints[n + 1] * size * pixel.y;
+
+          points[target++] = x + typePoints[n + 2] * size * pixel.x;
+          points[target++] = y - typePoints[n + 3] * size * pixel.y;
         }
-      });
+      };
 
-      return points;
+      drawPoints(points);
     };
 
-    const circlePoints = (projectedData, pixel) => {
-      const sizes = Array(projectedData.length);
-      let allPointsSize = 0;
-      projectedData.forEach((datum, i) => {
-        sizes[i] = Math.floor(Math.sqrt(datum.size) * 0.65);
-        allPointsSize += sizes[i];
-      });
+    const circlePointsWA = (filteredData, pixel, drawPoints) => {
+      const projectedData = getProjectedData(filteredData, true);
 
-      const points = new Float32Array(allPointsSize * 2 * 6);
-      let allPointsIndex = 0;
-      projectedData.forEach((datum, i) => {
-          const computedSize = sizes[i];
-          const x = datum.x;
-          const y = datum.y;
-
-          const getX = angle => x + Math.sin(angle) * computedSize * pixel.x;
-          const getY = angle => y + Math.cos(angle) * computedSize * pixel.y;
-
-          const num = 2 * computedSize;
-          for(let n = 0; n < num; n++) {
-            const a1 = 2 * n * Math.PI / num;
-            const a2 = 2 * (n + 1) * Math.PI / num;
-
-            const p = allPointsIndex;
-            points[p] = x;
-            points[p + 1] = y;
-            points[p + 2] = getX(a1);
-            points[p + 3] = getY(a1);
-            points[p + 4] = getX(a2);
-            points[p + 5] = getY(a2);
-            allPointsIndex += 6;
-          }
-      });
-
-      return points;
+      circles()
+        .pixelX(pixel.x)
+        .pixelY(pixel.y)
+        .callback(drawPoints)
+        (projectedData.data,  projectedData.segmentCount);
     };
 
-    const valueFn = () => {
+    const circlePoints = (filteredData, pixel, drawPoints) => {
+      const projectedData = getProjectedData(filteredData, true);
+      const points = new Float32Array(projectedData.segmentCount * 6);
+
+      let index = 0;
+      let target = 0;
+      const data = projectedData.data;
+      while(index < data.length) {
+        const x = data[index++];
+        const y = data[index++];
+        const size = data[index++];
+        const segments = data[index++];
+
+        const getX = angle => x + Math.sin(angle) * size * pixel.x;
+        const getY = angle => y + Math.cos(angle) * size * pixel.y;
+
+        for(let n = 0; n < segments; n++) {
+          const a1 = 2 * n * Math.PI / segments;
+          const a2 = 2 * (n + 1) * Math.PI / segments;
+
+          points[target++] = x;
+          points[target++] = y;
+          points[target++] = getX(a1);
+          points[target++] = getY(a1);
+          points[target++] = getX(a2);
+          points[target++] = getY(a2);
+        }
+      }
+      drawPoints(points);
+    };
+
+    const getProjectedData = (data, includeSegmentCount = false) => {
       const xScale = base.xScale().copy().range([-1, 1]);
       const yScale = base.yScale().copy().range([-1, 1]);
       const sizeFn = typeof size === 'function' ? size : () => size;
 
-      if (base.orient() === 'vertical') {
-        return (d, i) => ({
-          x: xScale(base.crossValue()(d, i), i),
-          y: yScale(base.mainValue()(d, i), i),
-          size: sizeFn(d)
-        });
-      } else {
-        return (d, i) => ({
-          y: xScale(base.crossValue()(d, i), i),
-          x: yScale(base.mainValue()(d, i), i),
-          size: sizeFn(d)
-        });
-      }
+      const dataPerPoint = includeSegmentCount ? 4 : 3;
+      const result = new Float32Array(data.length * dataPerPoint);
+      let allSegments = 0;
+      let index = 0;
+      const vertical = base.orient() === 'vertical';
+
+      data.forEach(d => {
+        if (vertical) {
+          result[index++] = xScale(base.crossValue()(d, i), i);
+          result[index++] = yScale(base.mainValue()(d, i), i);
+        } else {
+          result[index++] = yScale(base.mainValue()(d, i), i);
+          result[index++] = xScale(base.crossValue()(d, i), i);
+        }
+
+        const size = Math.floor(Math.sqrt(sizeFn(d)) * 0.65);
+        result[index++] = size;
+        if (includeSegmentCount) {
+          const segments = size * 2;
+          result[index++] = segments;
+          allSegments += segments;
+        }
+      });
+
+      return {
+        data: result,
+        segmentCount: allSegments
+      };
     };
 
     point.size = (...args) => {
@@ -155,7 +193,7 @@ export default () => {
 function shapeToPoints(d3Shape) {
   if (d3Shape) {
       const shapeSymbol = symbol().type(d3Shape);
-      const shapePath = shapeSymbol.size(5)();
+      const shapePath = shapeSymbol.size(3)();
       const points = shapePath
           .substring(1, shapePath.length - 1)
           .split("L")
@@ -170,7 +208,7 @@ function shapeToPoints(d3Shape) {
       }
 
       points.push(points[0]);
-      return points;
+      return points.reduce((acc, val) => acc.concat(val), []);
   }
   return [];
 }

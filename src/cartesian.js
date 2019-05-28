@@ -1,6 +1,7 @@
 import {select} from 'd3-selection';
 import {chartCartesian} from '@d3fc/d3fc-chart';
 import {rebindAll} from '@d3fc/d3fc-rebind';
+import {loadApi} from 'd3fc-webgl-proc';
 
 export default (xScale, yScale) => {
   const base = chartCartesian(xScale, yScale);
@@ -9,16 +10,18 @@ export default (xScale, yScale) => {
 
     selection.select('d3fc-canvas.plot-area')
       .on('draw', (d, i, nodes) => {
-          const canvas = select(nodes[i])
-              .select('canvas')
-              .node();
-          const series = base.canvasPlotArea();
-          const contextType = series.contextType ? series.contextType() : '2d';
+          loadApi().then(() => {
+              const canvas = select(nodes[i])
+                  .select('canvas')
+                  .node();
+              const series = base.canvasPlotArea();
+              const contextType = series.contextType ? series.contextType() : '2d';
 
-          series.context(canvas.getContext(contextType))
-              .xScale(xScale)
-              .yScale(yScale);
-          series(d);
+              series.context(canvas.getContext(contextType))
+                  .xScale(xScale)
+                  .yScale(yScale);
+              series(d);
+          });
       });
 
     return result;
