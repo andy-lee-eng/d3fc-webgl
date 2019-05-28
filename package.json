@@ -7,8 +7,8 @@
   "main": "build/d3fc-webgl.js",
   "module": "index",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/DevAndyLee/d3fc-webgl"
+    "type": "git",
+    "url": "https://github.com/DevAndyLee/d3fc-webgl"
   },
   "scripts": {
     "build": "rollup -c",
