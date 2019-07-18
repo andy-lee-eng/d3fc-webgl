@@ -13,8 +13,8 @@ for(let n = 0; n < numPoints; n++) {
 }
 
 let seriesName = "Line";
-const createSeries = (asWebGL) => {
-  const seriesType = asWebGL ? fcWebGL[`seriesWebGL${seriesName}`] : fc[`seriesCanvas${seriesName}`];
+const createSeries = (asWebgl) => {
+  const seriesType = asWebgl ? fcWebgl[`seriesWebgl${seriesName}`] : fc[`seriesCanvas${seriesName}`];
   
   return seriesType()
       .decorate(context => {
@@ -23,10 +23,13 @@ const createSeries = (asWebGL) => {
       });
 };
 
-const createChart = (asWebGL) => fcWebGL.cartesian(d3.scaleLinear(), d3.scaleLinear())
+const createChart = (asWebgl) => {
+  const chartComponent = asWebgl ? fcWebgl.cartesian : fc.chartCartesian;
+  return chartComponent(d3.scaleLinear(), d3.scaleLinear())
     .yDomain([0, 100])
     .xDomain([0, 100])
-    .canvasPlotArea(createSeries(asWebGL));
+    .canvasPlotArea(createSeries(asWebgl));
+};
 let chart = createChart(true);
 
 const movePoints = () => {
@@ -89,12 +92,12 @@ const stop = () => {
 };
 const start = () => requestAnimationFrame(render);
 
-const restart = (asWebGL, newSeriesName) => {
+const restart = (asWebgl, newSeriesName) => {
   stop().then(() => {
     d3.select('#content').html('');
 
     if (newSeriesName) seriesName = newSeriesName;
-    chart = createChart(asWebGL);
+    chart = createChart(asWebgl);
 
     start();
   });

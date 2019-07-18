@@ -53,7 +53,7 @@ This packages contains a number of D3 components that render various standard se
 
 #### Canvas rendering
 
-The `seriesWebGLLine` component has an API that is identical to the `seriesCanvasLine` counterpart, except that it requires a canvas context that was initialised for `webgl`.
+The `seriesWebglLine` component has an API that is identical to the `seriesCanvasLine` counterpart, except that it requires a canvas context that was initialised for `webgl`.
 
 ```javascript
 const data = [
@@ -64,7 +64,7 @@ const data = [
 
 const ctx = canvas.getContext('webgl');
 
-const line = fcWebGL.seriesWebGLLine()
+const line = fcWebgl.seriesWebglLine()
     .crossValue(d => d.x)
     .mainValue(d => d.y)
     .xScale(xScale)
@@ -81,19 +81,19 @@ Like the original canvas component, the WebGL components are invoked directly wi
 The WebGL series components can be rendered on their own, or be supplied as the series to a `cartesianChart` component. However, since we need to initialise the canvas for `webgl`, we can't use the original d3fc `cartesianChart` directly. Instead, we offer a new component that overrides the `draw` event of `cartesianChart` to draw to WebGL:
 
 ```javascript
-const chart = fcWebGL.cartesian(d3.scaleLinear(), d3.scaleLinear())
+const chart = fcWebgl.cartesian(d3.scaleLinear(), d3.scaleLinear())
   .yDomain([0, 100])
   .xDomain([0, 100])
-  .canvasPlotArea(fc.seriesWebGLLine());
+  .canvasPlotArea(fc.seriesWebglLine());
 ```
 
 #### Decorate Pattern
 
-The WebGL component implement the same decorate pattern as their Canvas counterparts, but since they're not actually doing 2d canvas rendering, it is more limited. You can still set fill and stroke styles as below:
+The WebGL components implement the same decorate pattern as their Canvas counterparts, but since they're not actually doing 2d canvas rendering, it is more limited. You can still set fill and stroke styles as below:
 
 ```javascript
 
-const line = fcWebGL.seriesWebGLBar()
+const line = fcWebgl.seriesWebglBar()
   .decorate((context, d) => {
     context.strokeWidth = 2;
     context.strokeStyle = 'red';
@@ -122,7 +122,7 @@ const yScale = d3.scaleLinear()
 
 const ctx = canvas.getContext('webgl');
 
-const barSeries = fcWebGL.seriesWebGLBar()
+const barSeries = fcWebgl.seriesWebglBar()
     .xScale(xScale)
     .yScale(yScale)
     .crossValue((_, i) => i)
@@ -143,7 +143,7 @@ const yScale = d3.scaleLinear()
     .domain([0, data.length])  // domain changed
     .range([height, 0]);
 
-const barSeries = fcWebGL.seriesWebGLBar()
+const barSeries = fcWebgl.seriesWebglBar()
     .xScale(xScale)
     .yScale(yScale)
     .orient('horizontal')      // orient property updated
@@ -165,10 +165,10 @@ The multi series renderers expose a `series` property which accepts an array of 
 
 ```javascript
 // a couple of series - value accessor configuration omitted for clarity
-const barSeries = fcWebGL.seriesWebGLBar();
-const lineSeries = fcWebGL.seriesWebGLLine();
+const barSeries = fcWebgl.seriesWebglBar();
+const lineSeries = fcWebgl.seriesWebglLine();
 
-const multiSeries = fcWebGL.seriesWebGLMulti()
+const multiSeries = fcWebgl.seriesWebglMulti()
     .xScale(xScale)
     .yScale(yScale)
     .context(ctx)
@@ -196,7 +196,7 @@ var xScale = d3.scaleBand()
     .domain(data.map(d => d.x))
     .rangeRound([0, width]);
 
-var bar = fc.autoBandwidth(fcWebGL.seriesWebGLBar())
+var bar = fc.autoBandwidth(fcWebgl.seriesWebglBar())
     .align('left')
     .crossValue(function(d) { return d.x; })
     .mainValue(function(d) { return d.y; });
@@ -213,7 +213,7 @@ var xScale = d3.scaleLinear()
     .domain([0, 10])
     .range([0, width]);
 
-var bar = fc.autoBandwidth(fcWebGL.seriesWebGLBar())
+var bar = fc.autoBandwidth(fcWebgl.seriesWebglBar())
     .crossValue(function(d) { return d.x; })
     .mainValue(function(d) { return d.y; })
     .widthFraction(0.5);
@@ -224,11 +224,11 @@ The `fc.autoBandwidth` component, when adapting a series, adds a `widthFraction`
 When using a multi, or repeat series, the `fc.autoBandwidth` component should be used to adapt the bar series directly, rather than adapting the multi or repeat series.
 
 ```javascript
-var bar = fcWebGL.seriesWebGLBar()
+var bar = fcWebgl.seriesWebglBar()
 
-var line = fcWebGL.seriesWebGLLine();
+var line = fcWebgl.seriesWebglLine();
 
-var multi = fcWebGL.seriesWebGLMulti()
+var multi = fcWebgl.seriesWebglMulti()
     .xScale(xScale)
     .yScale(yScale)
     .series([fc.autoBandwidth(bar), line]);
@@ -238,7 +238,7 @@ var multi = fcWebGL.seriesWebGLMulti()
 
 ![](screenshots/line.png)
 
-<a name="seriesWebGLLine" href="#seriesWebGLLine">#</a> fcWebGL.**seriesWebGLLine**()
+<a name="seriesWebglLine" href="#seriesWebglLine">#</a> fcWebgl.**seriesWebglLine**()
 
 Constructs a new line renderer.
 
@@ -266,7 +266,7 @@ If *ctx* is specified, sets the canvas context and returns this series. If *ctx*
 
 ![](screenshots/point.png)
 
-<a name="seriesWebGLPoint" href="#seriesWebGLPoint">#</a> fcWebGL.**seriesWebGLPoint**()
+<a name="seriesWebglPoint" href="#seriesWebglPoint">#</a> fcWebgl.**seriesWebglPoint**()
 
 Constructs a new point series renderer.
 
@@ -306,7 +306,7 @@ If *ctx* is specified, sets the canvas context and returns this series. If *ctx*
 
 ![](screenshots/area.png)
 
-<a name="seriesWebGLArea" href="#seriesWebGLArea">#</a> fc.**seriesWebGLArea**()
+<a name="seriesWebglArea" href="#seriesWebglArea">#</a> fc.**seriesWebglArea**()
 
 Constructs a new area series renderer.
 
@@ -335,7 +335,7 @@ If *ctx* is specified, sets the canvas context and returns this series. If *ctx*
 
 ![](screenshots/bar.png)
 
-<a name="seriesWebGLBar" href="#seriesWebGLBar">#</a> fcWebGL.**seriesWebGLBar**()
+<a name="seriesWebglBar" href="#seriesWebglBar">#</a> fcWebgl.**seriesWebglBar**()
 
 Constructs a new bar series renderer.
 
@@ -368,7 +368,7 @@ If *ctx* is specified, sets the canvas context and returns this series. If *ctx*
 
 ![](screenshots/multi.png)
 
-<a name="seriesWebGLMulti" href="#seriesWebGLMulti">#</a> fcWebGL.**seriesWebGLMulti**()
+<a name="seriesWebglMulti" href="#seriesWebglMulti">#</a> fcWebgl.**seriesWebglMulti**()
 
 Constructs a new multi series renderer.
 
@@ -392,7 +392,7 @@ When rendering the multi-series, the mapping function is invoked once for each o
 The mapping function is invoked with the data bound to the multi-series, (*data*), the index of the current series (*index*) and the array of series (*series*). A common pattern for the mapping function is to switch on the series type. For example, a multi-series could be used to render a line series together with an upper bound, indicated by a line annotation. In this case, the following would be a suitable mapping function:
 
 ```javascript
-const multi = fcWebGL.seriesWebGLMulti()
+const multi = fcWebgl.seriesWebglMulti()
     .series([line, annotation)
     .mapping((data, index, series) => {
       switch(series[index]) {
@@ -418,7 +418,7 @@ If *ctx* is specified, sets the canvas context and returns this series. If *ctx*
 
 ![](screenshots/repeat.png)
 
-<a name="seriesWebGLRepeat" href="#seriesWebGLRepeat">#</a> fcWebGL.**seriesWebGLRepeat**()
+<a name="seriesWebglRepeat" href="#seriesWebglRepeat">#</a> fcWebgl.**seriesWebglRepeat**()
 
 Constructs a new repeat series renderer.
 
@@ -432,9 +432,9 @@ const data = [
   [4, 5, 6]
 ];
 
-const line = fcWebGL.seriesWebGLLine();
+const line = fcWebgl.seriesWebglLine();
 
-const repeatSeries = fcWebGL.seriesWebGLRepeat()
+const repeatSeries = fcWebgl.seriesWebglRepeat()
     .xScale(xScale)
     .yScale(yScale)
     .context(ctx)
@@ -466,7 +466,7 @@ Please refer to the multi series for the documentation of these properties.
 
 ![](screenshots/grouped.png)
 
-<a name="seriesWebGLGrouped" href="#seriesWebGLGrouped">#</a> fcWebGL.**seriesWebGLGrouped**(*adaptedSeries*)
+<a name="seriesWebglGrouped" href="#seriesWebglGrouped">#</a> fcWebgl.**seriesWebglGrouped**(*adaptedSeries*)
 
 Constructs a new grouped series by adapting the given series. This allows the rendering of grouped bars.
 
@@ -475,7 +475,7 @@ The grouped series is responsible for applying a suitable offset, along the cros
 The following example shows the construction of a grouped bar series, where the scales and value accessors are configured:
 
 ```javascript
-var groupedBar = fcWebGL.seriesWebGLGrouped(fcWebGL.seriesWebGLBar())
+var groupedBar = fcWebgl.seriesWebglGrouped(fcWebgl.seriesWebglBar())
     .xScale(x)
     .yScale(y)
     .crossValue(d => d[0])
@@ -510,7 +510,7 @@ The `fc.group` component from the [d3fc-group](https://github.com/d3fc/d3fc/tree
 With the data in the correct format, the series is rendered just like the other series types:
 
 ```javascript
-groupedWebGLBar(series);
+groupedWebglBar(series);
 ```
 
 #### Properties
@@ -532,7 +532,7 @@ There is not an explicit series type for rendering stacked charts, it is a strai
 The following code demonstrates how to render a stacked bar series to an SVG. Note that the axis configuration is omitted for clarity:
 
 ```javascript
-var barSeries = fc.seriesWebGLBar()
+var barSeries = fc.seriesWebglBar()
     .xScale(x)
     .yScale(y)
     .crossValue(d => d.data.State)

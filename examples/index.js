@@ -24,9 +24,9 @@ const generateData = () => {
 generateData();
 
 let showBorders = false;
-const createSeries = (asWebGL) => {
-  const seriesType = asWebGL ? fcWebGL.seriesWebGLPoint : fc.seriesCanvasPoint;
-  const multiType = asWebGL ? fcWebGL.seriesWebGLMulti : fc.seriesCanvasMulti;
+const createSeries = (asWebgl) => {
+  const seriesType = asWebgl ? fcWebgl.seriesWebglPoint : fc.seriesCanvasPoint;
+  const multiType = asWebgl ? fcWebgl.seriesWebglMulti : fc.seriesCanvasMulti;
   
   var allSeries = symbols.map((symbol, i) =>
     seriesType()
@@ -53,10 +53,13 @@ const createSeries = (asWebGL) => {
     });
 };
 
-const createChart = (asWebGL) => fcWebGL.cartesian(d3.scaleLinear(), d3.scaleLinear())
+const createChart = (asWebgl) => {
+  const chartComponent = asWebgl ? fcWebgl.cartesian : fc.chartCartesian;
+  return chartComponent(d3.scaleLinear(), d3.scaleLinear())
     .yDomain([0, 100])
     .xDomain([0, 100])
-    .canvasPlotArea(createSeries(asWebGL));
+    .canvasPlotArea(createSeries(asWebgl));
+};
 let chart = createChart(true);
 
 const moveBubbles = () => {
@@ -127,11 +130,11 @@ const stop = () => {
 };
 const start = () => requestAnimationFrame(render);
 
-const restart = asWebGL => {
+const restart = asWebgl => {
   stop().then(() => {
     d3.select('#content').html('');
 
-    chart = createChart(asWebGL);
+    chart = createChart(asWebgl);
 
     start();
   });

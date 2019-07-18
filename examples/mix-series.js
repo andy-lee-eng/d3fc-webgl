@@ -45,17 +45,17 @@ const data = {
 
 const orient = "vertical";
 
-const line = fcWebGL.seriesWebGLLine()
+const line = fcWebgl.seriesWebglLine()
   .orient(orient)
   .decorate((context, d) => {
     context.strokeWidth = 2;
     context.strokeStyle = d == data.lines[0] ? "rgb(80, 200, 200)" : "rgb(200, 80, 200)";
   });
-const lines = fcWebGL.seriesWebGLRepeat()
+const lines = fcWebgl.seriesWebglRepeat()
   .orient('horizontal')
   .series(line);
 
-const area = fcWebGL.seriesWebGLArea()
+const area = fcWebgl.seriesWebglArea()
   .orient(orient)
   .baseValue(d => d.b)
   .decorate((context, d) => {
@@ -63,17 +63,17 @@ const area = fcWebGL.seriesWebGLArea()
     context.strokeStyle = d == data.areas[0] ? "rgb(80, 200, 80)" : "rgb(200, 200, 80)";
     context.fillStyle = d == data.areas[0] ? "rgba(80, 200, 80, 0.3)" : "rgba(200, 200, 80, 0.3)";
   });
-const areas = fcWebGL.seriesWebGLRepeat()
+const areas = fcWebgl.seriesWebglRepeat()
   .orient('horizontal')
   .series(area);
 
-const bars = fc.autoBandwidth(fcWebGL.seriesWebGLGrouped(fcWebGL.seriesWebGLBar()))
+const bars = fc.autoBandwidth(fcWebgl.seriesWebglGrouped(fcWebgl.seriesWebglBar()))
   .orient(orient)
   .decorate((context, d) => {
     context.fillStyle = d == data.bars[0] ? "rgba(200, 80, 80, 0.5)" : "rgba(80, 80, 200, 0.5)"
   });
 
-const multi = fcWebGL.seriesWebGLMulti()
+const multi = fcWebgl.seriesWebglMulti()
   .series([areas, lines, bars])
   .mapping((data, index, series) => {
     switch(series[index]) {
@@ -86,7 +86,7 @@ const multi = fcWebGL.seriesWebGLMulti()
       }
   });
 
-const chart = fcWebGL.cartesian(d3.scaleLinear(), d3.scaleLinear())
+const chart = fcWebgl.cartesian(d3.scaleLinear(), d3.scaleLinear())
   .yDomain([0, 100])
   .xDomain([0, 100])
   .canvasPlotArea(multi);

@@ -22,8 +22,8 @@ export default (series) => {
     // the bandwidth for the grouped series can be a function of datum / index. As a result
     // the offset scale required to cluster the 'sub' series is also dependent on datum / index.
     // This function computes the offset scale for a specific datum / index of the grouped series
-    grouped.offsetScaleForDatum = (data, d, i, screenPixels) => {
-        const width = 2 * bandwidth(d, i) / screenPixels;
+    grouped.offsetScaleForDatum = (data, d, i) => {
+        const width = bandwidth(d, i);
         const offset = alignOffset(align, width);
 
         const halfWidth = width / 2;

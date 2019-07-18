@@ -1,8 +1,7 @@
 export { default as cartesian } from './src/cartesian';
-export { default as seriesWebGLBar } from './src/series/bar';
-export { default as seriesWebGLLine } from './src/series/line';
-export { default as seriesWebGLArea } from './src/series/area';
-export { default as seriesWebGLPoint } from './src/series/point';
-export { default as seriesWebGLMulti } from './src/series/multi';
-export { default as seriesWebGLRepeat } from './src/series/repeat';
-export { default as seriesWebGLGrouped } from './src/series/grouped';
+export { default as seriesWebglBar } from './src/webgl/bar';
+export { default as seriesWebglLine } from './src/webgl/line';
+export { default as seriesWebglArea } from './src/webgl/area';
+export { default as seriesWebglPoint } from './src/webgl/point';
+export { default as seriesWebglGrouped } from './src/webgl/grouped';
+export { seriesCanvasMulti as seriesWebglMulti, seriesCanvasRepeat as seriesWebglRepeat } from '@d3fc/d3fc-series';

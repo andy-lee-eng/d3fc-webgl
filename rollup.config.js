@@ -1,5 +1,6 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
 
 const packageName = 'd3fc-webgl';
 
@@ -22,18 +23,19 @@ export default {
     file: `build/${packageName}.js`,
     format: 'umd',
     globals,
-    name: 'fcWebGL',
+    name: 'fcWebgl',
     sourcemap: true,
     compact: true
   },
   plugins: [
-      babel({
-          babelrc: false,
-          presets: [
-              ['@babel/preset-env']
-          ]
-      }),
-      resolve({ mainFields: ['module'] })
+    resolve(),
+    commonjs(),
+    babel({
+      babelrc: false,
+      presets: [
+        ['@babel/preset-env']
+      ]
+    })
   ],
   external
 }

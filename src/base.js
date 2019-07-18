@@ -1,16 +1,7 @@
-import setupGL from './webgl/setup';
-
-export default (initialValues) => {
-  let context = null;
-  let draw = null;
+export default initialValues => {
 
   const env = Object.assign({}, initialValues);
-  const base = () => {
-    if (!draw) {
-      draw = setupGL(context);
-      draw();
-    }
-  };
+  const base = () => {};
 
   Object.keys(env).forEach(key => {
       base[key] = (...args) => {
@@ -21,22 +12,6 @@ export default (initialValues) => {
           return base;
       };
   });
-
-  base.context = (...args) => {
-    if (!args.length) {
-        return context;
-    }
-    context = args[0];
-    return base;
-  };
-  base.draw = (...args) => {
-    if (!args.length) {
-        return draw;
-    }
-    draw = args[0];
-    return base;
-  };
-  base.contextType = () => 'webgl';
 
   return base;
 };
